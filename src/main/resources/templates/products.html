@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Shop')}"></head>
+<body>
+
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<section class="products-section">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar Filters -->
+            <div class="col-lg-3 mb-4">
+                <div class="filter-sidebar">
+                    <h5 class="fw-bold mb-4"><i class="fas fa-filter me-2"></i>Filters</h5>
+                    <form th:action="@{/products}" method="get">
+                        <input type="hidden" name="category" th:value="${selectedCategory != null ? selectedCategory.name() : ''}">
+
+                        <div class="filter-group">
+                            <h6>Price Range</h6>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <input type="number" name="minPrice" class="form-control" placeholder="Min" th:value="${param.minPrice}">
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" name="maxPrice" class="form-control" placeholder="Max" th:value="${param.maxPrice}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="filter-group">
+                            <h6>Size</h6>
+                            <div class="filter-option" th:each="sz : ${ {'XS','S','M','L','XL','XXL','One Size'} }">
+                                <input type="radio" name="size" th:value="${sz}" th:id="${'size_' + sz}" th:checked="${param.size != null && param.size == sz}">
+                                <label th:for="${'size_' + sz}" th:text="${sz}">Size</label>
+                            </div>
+                        </div>
+
+                        <div class="filter-group">
+                            <h6>Sort By</h6>
+                            <select name="sort" class="form-select">
+                                <option value="">Default</option>
+                                <option value="price_asc" th:selected="${param.sort == 'price_asc'}">Price: Low to High</option>
+                                <option value="price_desc" th:selected="${param.sort == 'price_desc'}">Price: High to Low</option>
+                                <option value="rating" th:selected="${param.sort == 'rating'}">Highest Rated</option>
+                                <option value="newest" th:selected="${param.sort == 'newest'}">Newest First</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-accent w-100">Apply Filters</button>
+                        <a th:href="@{/products}" class="btn btn-outline-secondary w-100 mt-2">Clear All</a>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="col-lg-9">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0" th:text="${query != null ? 'Search: ' + query : (selectedCategory != null ? selectedCategory.displayName : 'All Products')}">All Products</h4>
+                    <span class="text-muted" th:text="${products.size()} + ' products found'">0 products found</span>
+                </div>
+
+                <div class="row g-4" th:if="${!products.isEmpty()}">
+                    <div class="col-6 col-md-4" th:each="product : ${products}">
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img th:src="${product.imageUrl}" th:alt="${product.name}">
+                                <span class="product-badge badge-new" th:if="${product.newArrival}">New</span>
+                                <span class="product-badge badge-sale" th:if="${product.flashSale}" th:text="${product.discountPercent} + '% OFF'">SALE</span>
+                                <div class="product-actions">
+                                    <a th:href="@{/product/{id}(id=${product.id})}" class="action-btn"><i class="fas fa-eye"></i></a>
+                                    <button class="action-btn" onclick="quickAdd(this)" th:data-id="${product.id}"><i class="fas fa-shopping-bag"></i></button>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <div class="product-brand" th:text="${product.brand}">Brand</div>
+                                <h5 class="product-title" th:text="${product.name}">Product Name</h5>
+                                <div class="product-rating">
+                                    <i class="fas fa-star"></i>
+                                    <span th:text="${product.rating} + ' (' + ${product.reviewCount} + ')'">4.5 (120)</span>
+                                </div>
+                                <div class="product-price">
+                                    <span class="price-current" th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 2)}">$29.99</span>
+                                    <span class="price-original" th:if="${product.originalPrice > product.price}" th:text="'$' + ${#numbers.formatDecimal(product.originalPrice, 1, 2)}">$59.99</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center py-5" th:if="${products.isEmpty()}">
+                    <i class="fas fa-search fa-4x text-muted mb-3"></i>
+                    <h4>No products found</h4>
+                    <p class="text-muted">Try adjusting your filters or search query.</p>
+                    <a th:href="@{/products}" class="btn btn-accent">View All Products</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+<div th:replace="~{fragments :: scripts}"></div>
+
+</body>
+</html>
+

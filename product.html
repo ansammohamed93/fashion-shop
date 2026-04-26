@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product - Fashion Shop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav id="navbar" class="navbar navbar-expand-lg navbar-dark fixed-top"></nav>
+
+<section class="product-detail">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="products.html">Shop</a></li>
+                <li class="breadcrumb-item active" id="breadcrumbName">Product</li>
+            </ol>
+        </nav>
+
+        <div class="row g-5" id="productDetail"></div>
+
+        <div class="mt-5 pt-5">
+            <h3 class="fw-bold mb-4">You May Also Like</h3>
+            <div class="row g-4" id="relatedProducts"></div>
+        </div>
+    </div>
+</section>
+
+<footer id="footer" class="footer"></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+    let currentProduct = null;
+
+    function renderProductDetail() {
+        const id = parseInt(getParam('id'));
+        currentProduct = products.find(p => p.id === id);
+        if (!currentProduct) {
+            window.location.href = 'products.html';
+            return;
+        }
+
+        document.getElementById('breadcrumbName').textContent = currentProduct.name;
+        document.title = currentProduct.name + ' - Fashion Shop';
+
+        const thumbnails = currentProduct.imageUrls.map((img, i) => `
+            <div class="thumbnail ${i===0?'active':''}" onclick="changeImage('${img}', this)">
+                <img src="${img}" alt="${currentProduct.name}">
+            </div>
+        `).join('');
+
+        const sizeButtons = currentProduct.sizes.map(sz => `
+            <button type="button" class="size-btn" data-size="${sz}" onclick="selectSize(this)">${sz}</button>
+        `).join('');
+
+        const colorButtons = currentProduct.colors.map(cl => `
+            <button type="button" class="color-btn" style="background-color: ${cl.toLowerCase()}" data-color="${cl}" onclick="selectColor(this)" title="${cl}"></button>
+        `).join('');
+
+        const discountBadge = currentProduct.discountPercent > 0 ? `<span class="discount-tag">${currentProduct.discountPercent}% OFF</span>` : '';
+        const originalPrice = currentProduct.originalPrice > currentProduct.price ? `<span class="original">$${currentProduct.originalPrice.toFixed(2)}</span>` : '';
+
+        document.getElementById('productDetail').innerHTML = `
+            <div class="col-lg-6">
+                <div class="product-gallery">
+                    <div class="main-image">
+                        <img src="${currentProduct.imageUrl}" alt="${currentProduct.name}" id="mainImage" class="img-fluid">
+                    </div>
+                    <div class="thumbnail-list">${thumbnails}</div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="product-detail-info">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge bg-success">In Stock</span>
+                        ${currentProduct.newArrival ? '<span class="badge bg-warning text-dark">New Arrival</span>' : ''}
+                    </div>
+                    <div class="product-brand text-muted text-uppercase small">${currentProduct.brand}</div>
+                    <h1>${currentProduct.name}</h1>
+                    <div class="product-rating mb-3">
+                        <i class="fas fa-star text-warning"></i>
+                        <span class="fw-bold">${currentProduct.rating}</span>
+                        <span class="text-muted">(${currentProduct.reviewCount} reviews)</span>
+                    </div>
+                    <div class="detail-price">
+                        <span>$${currentProduct.price.toFixed(2)}</span>
+                        ${originalPrice}
+                        ${discountBadge}
+                    </div>
+                    <p class="text-muted my-4">${currentProduct.description}</p>
+
+                    <div class="size-selector">
+                        <label class="selector-label">Size: <span id="selectedSize" class="fw-normal">Select a size</span></label>
+                        <div class="size-options">${sizeButtons}</div>
+                    </div>
+
+                    <div class="color-selector">
+                        <label class="selector-label">Color: <span id="selectedColor" class="fw-normal">Select a color</span></label>
+                        <div class="color-options">${colorButtons}</div>
+                    </div>
+
+                    <div class="quantity-selector">
+                        <button type="button" class="qty-btn" onclick="changeQty(-1)">-</button>
+                        <input type="text" id="qtyInput" value="1" class="qty-input" readonly>
+                        <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+                    </div>
+
+                    <button type="button" class="btn btn-accent add-to-cart-btn" onclick="addToCartDetail()">
+                        <i class="fas fa-shopping-bag me-2"></i>Add to Cart
+                    </button>
+
+                    <div class="mt-4 pt-4 border-top">
+                        <div class="row text-center g-3">
+                            <div class="col-4"><i class="fas fa-truck text-accent fs-4 mb-2"></i><div class="small text-muted">Free Shipping</div></div>
+                            <div class="col-4"><i class="fas fa-undo text-accent fs-4 mb-2"></i><div class="small text-muted">30 Days Return</div></div>
+                            <div class="col-4"><i class="fas fa-shield-alt text-accent fs-4 mb-2"></i><div class="small text-muted">Secure Payment</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Auto-select first options
+        const firstSize = document.querySelector('.size-btn');
+        const firstColor = document.querySelector('.color-btn');
+        if (firstSize) selectSize(firstSize);
+        if (firstColor) selectColor(firstColor);
+
+        // Related products
+        const related = products.filter(p => p.category === currentProduct.category && p.id !== currentProduct.id).slice(0, 4);
+        document.getElementById('relatedProducts').innerHTML = related.map(renderProductCard).join('');
+    }
+
+    function changeImage(src, thumb) {
+        document.getElementById('mainImage').src = src;
+        document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+        thumb.classList.add('active');
+    }
+
+    function selectSize(btn) {
+        document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('selectedSize').textContent = btn.dataset.size;
+    }
+
+    function selectColor(btn) {
+        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('selectedColor').textContent = btn.dataset.color;
+    }
+
+    function changeQty(delta) {
+        const input = document.getElementById('qtyInput');
+        let val = parseInt(input.value) + delta;
+        if (val >= 1 && val <= 10) input.value = val;
+    }
+
+    function addToCartDetail() {
+        const size = document.querySelector('.size-btn.active')?.dataset.size;
+        const color = document.querySelector('.color-btn.active')?.dataset.color;
+        const qty = parseInt(document.getElementById('qtyInput').value);
+        if (!size) { showToast('Please select a size', 'error'); return; }
+        if (!color) { showToast('Please select a color', 'error'); return; }
+        addToCart(currentProduct.id, qty, size, color);
+    }
+
+    document.addEventListener('DOMContentLoaded', renderProductDetail);
+</script>
+
+</body>
+</html>
+

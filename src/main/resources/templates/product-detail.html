@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head(${product.name})}"></head>
+<body>
+
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<section class="product-detail">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}">Home</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/products}">Shop</a></li>
+                <li class="breadcrumb-item active" th:text="${product.name}">Product</li>
+            </ol>
+        </nav>
+
+        <div class="row g-5">
+            <!-- Product Images -->
+            <div class="col-lg-6">
+                <div class="product-gallery">
+                    <div class="main-image">
+                        <img th:src="${product.imageUrl}" th:alt="${product.name}" id="mainImage" class="img-fluid">
+                    </div>
+                    <div class="thumbnail-list" th:if="${product.imageUrls != null && product.imageUrls.size() > 1}">
+                        <div class="thumbnail active" th:each="img, iter : ${product.imageUrls}" th:onclick="|changeImage('${img}', this)|">
+                            <img th:src="${img}" th:alt="${product.name}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="col-lg-6">
+                <div class="product-detail-info">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge bg-success" th:if="${product.stock > 0}">In Stock</span>
+                        <span class="badge bg-danger" th:if="${product.stock == 0}">Out of Stock</span>
+                        <span class="badge bg-warning text-dark" th:if="${product.newArrival}">New Arrival</span>
+                    </div>
+
+                    <div class="product-brand text-muted text-uppercase small" th:text="${product.brand}">Brand</div>
+                    <h1 th:text="${product.name}">Product Name</h1>
+
+                    <div class="product-rating mb-3">
+                        <i class="fas fa-star text-warning"></i>
+                        <span class="fw-bold" th:text="${product.rating}">4.5</span>
+                        <span class="text-muted" th:text="'(' + ${product.reviewCount} + ' reviews)'">(120 reviews)</span>
+                    </div>
+
+                    <div class="detail-price">
+                        <span th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 2)}">$29.99</span>
+                        <span class="original" th:if="${product.originalPrice > product.price}" th:text="'$' + ${#numbers.formatDecimal(product.originalPrice, 1, 2)}">$59.99</span>
+                        <span class="discount-tag" th:if="${product.discountPercent > 0}" th:text="${product.discountPercent} + '% OFF'">50% OFF</span>
+                    </div>
+
+                    <p class="text-muted my-4" th:text="${product.description}">Description</p>
+
+                    <form th:action="@{/cart/add}" method="post" id="addToCartForm">
+                        <input type="hidden" name="productId" th:value="${product.id}">
+
+                        <div class="size-selector" th:if="${product.sizes != null && !product.sizes.isEmpty()}">
+                            <label class="selector-label">Size: <span id="selectedSize" class="fw-normal">Select a size</span></label>
+                            <div class="size-options">
+                                <button type="button" class="size-btn" th:each="sz : ${product.sizes}" th:text="${sz}" th:data-size="${sz}" onclick="selectSize(this)"></button>
+                            </div>
+                            <input type="hidden" name="size" id="sizeInput" required>
+                        </div>
+
+                        <div class="color-selector" th:if="${product.colors != null && !product.colors.isEmpty()}">
+                            <label class="selector-label">Color: <span id="selectedColor" class="fw-normal">Select a color</span></label>
+                            <div class="color-options">
+                                <button type="button" class="color-btn" th:each="cl : ${product.colors}" th:style="'background-color: ' + ${cl.toLowerCase()}" th:data-color="${cl}" onclick="selectColor(this)" th:title="${cl}"></button>
+                            </div>
+                            <input type="hidden" name="color" id="colorInput" required>
+                        </div>
+
+                        <div class="quantity-selector">
+                            <button type="button" class="qty-btn" onclick="changeQty(-1)">-</button>
+                            <input type="number" name="quantity" id="qtyInput" value="1" min="1" max="10" class="qty-input" readonly>
+                            <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+                        </div>
+
+                        <button type="submit" class="btn btn-accent add-to-cart-btn" onclick="return validateForm()">
+                            <i class="fas fa-shopping-bag me-2"></i>Add to Cart
+                        </button>
+                    </form>
+
+                    <div class="mt-4 pt-4 border-top">
+                        <div class="row text-center g-3">
+                            <div class="col-4">
+                                <i class="fas fa-truck text-accent fs-4 mb-2"></i>
+                                <div class="small text-muted">Free Shipping</div>
+                            </div>
+                            <div class="col-4">
+                                <i class="fas fa-undo text-accent fs-4 mb-2"></i>
+                                <div class="small text-muted">30 Days Return</div>
+                            </div>
+                            <div class="col-4">
+                                <i class="fas fa-shield-alt text-accent fs-4 mb-2"></i>
+                                <div class="small text-muted">Secure Payment</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Products -->
+        <div class="mt-5 pt-5" th:if="${!relatedProducts.isEmpty()}">
+            <h3 class="fw-bold mb-4">You May Also Like</h3>
+            <div class="row g-4">
+                <div class="col-6 col-md-3" th:each="rp : ${relatedProducts}" th:if="${rp.id != product.id}">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img th:src="${rp.imageUrl}" th:alt="${rp.name}">
+                            <div class="product-actions">
+                                <a th:href="@{/product/{id}(id=${rp.id})}" class="action-btn"><i class="fas fa-eye"></i></a>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h5 class="product-title" th:text="${rp.name}">Product</h5>
+                            <div class="product-price">
+                                <span class="price-current" th:text="'$' + ${#numbers.formatDecimal(rp.price, 1, 2)}">$29.99</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+<div th:replace="~{fragments :: scripts}"></div>
+
+<script>
+function changeImage(src, thumb) {
+    document.getElementById('mainImage').src = src;
+    document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
+}
+
+function selectSize(btn) {
+    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('sizeInput').value = btn.dataset.size;
+    document.getElementById('selectedSize').textContent = btn.dataset.size;
+}
+
+function selectColor(btn) {
+    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('colorInput').value = btn.dataset.color;
+    document.getElementById('selectedColor').textContent = btn.dataset.color;
+}
+
+function changeQty(delta) {
+    const input = document.getElementById('qtyInput');
+    let val = parseInt(input.value) + delta;
+    if (val >= 1 && val <= 10) input.value = val;
+}
+
+function validateForm() {
+    const sizeInput = document.getElementById('sizeInput');
+    const colorInput = document.getElementById('colorInput');
+    if (document.querySelector('.size-options') && !sizeInput.value) {
+        showToast('Please select a size', 'error');
+        return false;
+    }
+    if (document.querySelector('.color-options') && !colorInput.value) {
+        showToast('Please select a color', 'error');
+        return false;
+    }
+    showToast('Added to cart successfully!', 'success');
+    return true;
+}
+
+// Auto-select first options if available
+window.addEventListener('DOMContentLoaded', () => {
+    const firstSize = document.querySelector('.size-btn');
+    const firstColor = document.querySelector('.color-btn');
+    if (firstSize) selectSize(firstSize);
+    if (firstColor) selectColor(firstColor);
+});
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Home')}"></head>
+<body>
+
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 hero-content">
+                <h1>Discover Your <span>Style</span></h1>
+                <p>Explore the latest trends in fashion with up to 70% off. New arrivals every day for men, women, and kids.</p>
+                <div class="hero-btns">
+                    <a th:href="@{/products}" class="btn btn-accent me-3">Shop Now <i class="fas fa-arrow-right ms-2"></i></a>
+                    <a th:href="@{/products(category=NEW_ARRIVALS)}" class="btn btn-outline-light">New Arrivals</a>
+                </div>
+            </div>
+            <div class="col-lg-6 hero-image d-none d-lg-block">
+                <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=700" alt="Fashion" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories-section">
+    <div class="container">
+        <h2 class="section-title">Shop by Category</h2>
+        <div class="row g-4">
+            <div class="col-6 col-md-4 col-lg-2" th:each="cat : ${categories}">
+                <a th:href="@{/products(category=${cat.name()})}" class="text-decoration-none">
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i th:class="${cat.name() == 'WOMEN' ? 'fas fa-female' :
+                                          cat.name() == 'MEN' ? 'fas fa-male' :
+                                          cat.name() == 'KIDS' ? 'fas fa-child' :
+                                          cat.name() == 'SHOES' ? 'fas fa-shoe-prints' :
+                                          cat.name() == 'BAGS' ? 'fas fa-shopping-bag' :
+                                          'fas fa-gem'}"></i>
+                        </div>
+                        <h5 th:text="${cat.displayName}">Category</h5>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Flash Sale Section -->
+<section class="flash-sale" th:if="${!flashSales.isEmpty()}">
+    <div class="container position-relative">
+        <h2 class="section-title">Flash Sale</h2>
+        <div class="countdown">
+            <div class="countdown-item">
+                <span class="number" id="hours">04</span>
+                <span class="label">Hours</span>
+            </div>
+            <div class="countdown-item">
+                <span class="number" id="minutes">32</span>
+                <span class="label">Minutes</span>
+            </div>
+            <div class="countdown-item">
+                <span class="number" id="seconds">15</span>
+                <span class="label">Seconds</span>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-6 col-md-4 col-lg-3" th:each="product : ${flashSales}">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img th:src="${product.imageUrl}" th:alt="${product.name}">
+                        <span class="product-badge badge-sale" th:text="${product.discountPercent} + '% OFF'">50% OFF</span>
+                        <div class="product-actions">
+                            <a th:href="@{/product/{id}(id=${product.id})}" class="action-btn"><i class="fas fa-eye"></i></a>
+                            <button class="action-btn" onclick="quickAdd(this)" th:data-id="${product.id}"><i class="fas fa-shopping-bag"></i></button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-brand" th:text="${product.brand}">Brand</div>
+                        <h5 class="product-title" th:text="${product.name}">Product Name</h5>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <span th:text="${product.rating} + ' (' + ${product.reviewCount} + ')'">4.5 (120)</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="price-current" th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 2)}">$29.99</span>
+                            <span class="price-original" th:text="'$' + ${#numbers.formatDecimal(product.originalPrice, 1, 2)}">$59.99</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-5">
+            <a th:href="@{/products}" class="btn btn-accent">View All Deals</a>
+        </div>
+    </div>
+</section>
+
+<!-- New Arrivals Section -->
+<section class="products-section">
+    <div class="container">
+        <h2 class="section-title">New Arrivals</h2>
+        <div class="row g-4">
+            <div class="col-6 col-md-4 col-lg-3" th:each="product : ${newArrivals}">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img th:src="${product.imageUrl}" th:alt="${product.name}">
+                        <span class="product-badge badge-new">New</span>
+                        <div class="product-actions">
+                            <a th:href="@{/product/{id}(id=${product.id})}" class="action-btn"><i class="fas fa-eye"></i></a>
+                            <button class="action-btn" onclick="quickAdd(this)" th:data-id="${product.id}"><i class="fas fa-shopping-bag"></i></button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-brand" th:text="${product.brand}">Brand</div>
+                        <h5 class="product-title" th:text="${product.name}">Product Name</h5>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <span th:text="${product.rating} + ' (' + ${product.reviewCount} + ')'">4.5 (120)</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="price-current" th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 2)}">$29.99</span>
+                            <span class="price-original" th:if="${product.originalPrice > product.price}" th:text="'$' + ${#numbers.formatDecimal(product.originalPrice, 1, 2)}">$59.99</span>
+                            <span class="discount-tag" th:if="${product.discountPercent > 0}" th:text="${product.discountPercent} + '% OFF'">50% OFF</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-5">
+            <a th:href="@{/products}" class="btn btn-outline-dark rounded-pill px-5">View All Products</a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Banner -->
+<section class="py-5" style="background: white;">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-md-3">
+                <i class="fas fa-shipping-fast fa-3x mb-3" style="color: var(--accent);"></i>
+                <h5 class="fw-bold">Free Shipping</h5>
+                <p class="text-muted small">On orders over $50</p>
+            </div>
+            <div class="col-md-3">
+                <i class="fas fa-undo fa-3x mb-3" style="color: var(--accent);"></i>
+                <h5 class="fw-bold">Easy Returns</h5>
+                <p class="text-muted small">30-day return policy</p>
+            </div>
+            <div class="col-md-3">
+                <i class="fas fa-lock fa-3x mb-3" style="color: var(--accent);"></i>
+                <h5 class="fw-bold">Secure Payment</h5>
+                <p class="text-muted small">100% secure checkout</p>
+            </div>
+            <div class="col-md-3">
+                <i class="fas fa-headset fa-3x mb-3" style="color: var(--accent);"></i>
+                <h5 class="fw-bold">24/7 Support</h5>
+                <p class="text-muted small">Dedicated support team</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+<div th:replace="~{fragments :: scripts}"></div>
+
+</body>
+</html>
+
