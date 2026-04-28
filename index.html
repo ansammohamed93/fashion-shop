@@ -16,20 +16,16 @@
 <!-- Hero Section -->
 <section class="hero">
     <div class="hero-blob"></div>
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6 hero-content">
-                <h1>Discover Your <span>Style</span></h1>
-                <p>Explore the latest trends in fashion with up to 70% off. New arrivals every day for men, women, and kids.</p>
-                <div class="hero-btns">
-                    <a href="products.html" class="btn btn-accent me-3">Shop Now <i class="fas fa-arrow-right ms-2"></i></a>
-                    <a href="products.html?sort=newest" class="btn btn-outline-light">New Arrivals</a>
-                </div>
-            </div>
-            <div class="col-lg-6 hero-image d-none d-lg-block">
-                <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=700" alt="Fashion" class="img-fluid">
-            </div>
+    <div class="hero-content">
+        <h1>Discover Your <span>Style</span></h1>
+        <p>Explore the latest trends in fashion with up to 70% off. New arrivals every day for men, women, and kids.</p>
+        <div class="hero-btns">
+            <a href="products.html" class="btn btn-accent">Shop Now <i class="fas fa-arrow-right ms-2"></i></a>
+            <a href="products.html?sort=newest" class="btn btn-outline-light">New Arrivals</a>
         </div>
+    </div>
+    <div class="hero-scroll">
+        <i class="fas fa-chevron-down"></i>
     </div>
 </section>
 
@@ -186,40 +182,40 @@
 
 <footer id="footer" class="footer"></footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/data.js"></script>
-    <script src="js/app.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Render categories
-            const catRow = document.getElementById('categoriesRow');
-            catRow.innerHTML = categories.map(cat => `
-                <div class="col-6 col-md-4 col-lg-2">
-                    <a href="products.html?category=${cat.name}" class="text-decoration-none">
-                        <div class="category-card">
-                            <div class="category-icon"><i class="fas ${cat.icon}"></i></div>
-                            <h5>${cat.displayName}</h5>
-                        </div>
-                    </a>
-                </div>
-            `).join('');
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Render categories
+        const catRow = document.getElementById('categoriesRow');
+        catRow.innerHTML = categories.map(cat => `
+            <div class="col-6 col-md-4 col-lg-2">
+                <a href="products.html?category=${cat.name}" class="text-decoration-none">
+                    <div class="category-card">
+                        <div class="category-icon"><i class="fas ${cat.icon}"></i></div>
+                        <h5>${cat.displayName}</h5>
+                    </div>
+                </a>
+            </div>
+        `).join('');
 
-            // Render trending (top rated products)
-            const trending = products.filter(p => p.rating >= 4.7).slice(0, 4);
-            document.getElementById('trendingRow').innerHTML = trending.map(renderProductCard).join('');
+        // Render trending (top rated products)
+        const trending = products.filter(p => p.rating >= 4.7).slice(0, 4);
+        document.getElementById('trendingRow').innerHTML = trending.map(renderProductCard).join('');
 
-            // Render flash sales
-            const flashSales = products.filter(p => p.flashSale);
-            document.getElementById('flashSalesRow').innerHTML = flashSales.map(renderProductCard).join('');
+        // Render flash sales
+        const flashSales = products.filter(p => p.flashSale);
+        document.getElementById('flashSalesRow').innerHTML = flashSales.map(renderProductCard).join('');
 
-            // Render new arrivals
-            const newArrivals = products.filter(p => p.newArrival);
-            document.getElementById('newArrivalsRow').innerHTML = newArrivals.map(renderProductCard).join('');
+        // Render new arrivals
+        const newArrivals = products.filter(p => p.newArrival);
+        document.getElementById('newArrivalsRow').innerHTML = newArrivals.map(renderProductCard).join('');
 
-            // Re-init scroll animations for dynamically rendered content
-            reinitScrollAnimations();
-        });
-    </script>
+        // Re-init scroll animations for dynamically rendered content
+        reinitScrollAnimations();
+    });
+</script>
 
 </body>
 </html>

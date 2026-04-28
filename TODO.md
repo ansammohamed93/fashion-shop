@@ -1,36 +1,38 @@
-# ✅ Fashion Shop - TODO List
+# Fashion Shop Redesign TODO
 
-## ✅ Completed Tasks
+## Completed Steps ✅
 
-- [x] Redesign Hero section with dark gradient & floating blobs
-- [x] Remove diagonal clip-path from Hero & Flash Sale
-- [x] Replace flash sale plus-sign background with subtle radial gradient
-- [x] Add "Trending Now" section
-- [x] Add "Brands Marquee" section with auto-scroll
-- [x] Add "Testimonials" section
-- [x] Add scroll animation for Hero image (parallax effect)
-- [x] Create README.md with setup instructions
+- [x] Step 1: Update CSS - Hero section colors (lighter purple tones)
+- [x] Step 2: Update CSS - Flash sale background (removed diagonal clip-path, kept subtle gradient)
+- [x] Step 3: Update CSS - Add new section styles (Trending, Brands, Testimonials)
+- [x] Step 4: Update index.html - Hero section structure (image visible on mobile)
+- [x] Step 5: Update index.html - Add Trending Now section
+- [x] Step 6: Update index.html - Add Brands Marquee section
+- [x] Step 7: Update index.html - Add Testimonials section
+- [x] Step 8: Update js/app.js - Add scroll animations for new sections
+- [x] Step 9: Add neon glow border effect to hero image
+- [x] Step 10: Mobile responsive improvements (colors, spacing, layout)
 
-## 🚀 How to Run This Project
+## Changes Summary
 
-### Step 1: Open the file
-- Double-click `index.html` in the folder, OR
-- Use VS Code "Live Server" extension
+### Hero Section
+- Lighter background colors (purple tones instead of dark grey)
+- Neon glow border effect around hero image (pink/red glow)
+- Enhanced hover effect with stronger glow
+- Image now visible on mobile devices
 
-### Step 2: Browse
-- Homepage: `index.html`
-- Products: `products.html`
-- Product Detail: `product.html?id=1`
-- Cart: `cart.html`
+### Flash Sale
+- Removed diagonal clip-path (now straight rectangle)
+- Kept subtle radial gradient background
 
-## 📂 Files Overview
-| File | Description |
-|------|-------------|
-| `index.html` | Main homepage with all sections |
-| `css/style.css` | All styling & animations |
-| `js/app.js` | Cart, navbar, footer, scroll effects |
-| `js/data.js` | Products & categories data |
+### New Sections Added
+1. **Trending Now** - Shows top-rated products
+2. **Brands Marquee** - Scrolling brand names with hover effects
+3. **Testimonials** - 3 customer review cards with ratings
 
----
-Project ready for GitHub! 🎉
+### Mobile Improvements
+- Hero image displays on mobile
+- Better color contrast for text
+- Stacked buttons for easier tapping
+- Reduced section padding for smaller screens
 

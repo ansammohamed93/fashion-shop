@@ -177,12 +177,12 @@ function renderFooter() {
             <div class="row g-4">
                 <div class="col-lg-4">
                     <h4 class="fw-bold mb-3"><i class="fas fa-crown me-2"></i>FASHION<span class="text-accent">SHOP</span></h4>
-                    <p class="text-muted">Your ultimate destination for trendy fashion. Discover the latest styles at unbeatable prices.</p>
+                    <p >Your ultimate destination for trendy fashion. Discover the latest styles at unbeatable prices.</p>
                     <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                     <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#"><i class="fab fa-google"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-2 col-6">
@@ -205,7 +205,7 @@ function renderFooter() {
                 </div>
                 <div class="col-lg-4">
                     <h6 class="fw-bold mb-3">Newsletter</h6>
-                    <p class="text-muted small">Subscribe for exclusive deals and new arrivals!</p>
+                    <p class=" small">Subscribe for exclusive deals and new arrivals!</p>
                     <form class="newsletter-form" onsubmit="event.preventDefault(); showToast('Subscribed!','success');">
                         <div class="input-group">
                             <input type="email" class="form-control" placeholder="Your email" required>
@@ -216,13 +216,10 @@ function renderFooter() {
             </div>
             <hr class="my-4">
             <div class="row align-items-center">
-                <div class="col-md-6 text-center text-md-start text-muted small">
-                    &copy; 2024 Fashion Shop. All rights reserved.
+                <div class="text-center text-0f0654e20314 small">
+                    &copy; 2026 Fashion Shop. All rights reserved.
                 </div>
-                <div class="col-md-6 text-center text-md-end text-muted small">
-                    <span class="me-3"><i class="fas fa-image me-1"></i>Images: <a href="https://unsplash.com" target="_blank" class="text-accent text-decoration-none">Unsplash</a></span>
-                    <span><i class="fas fa-database me-1"></i>Data: Local JSON</span>
-                </div>
+            
             </div>
         </div>
     `;
